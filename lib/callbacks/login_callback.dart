@@ -4,7 +4,7 @@ mixin LoginCallbackMixin {
 
   void onUserLoginSuccess(String username);
 
-  void onUserRegisterSuccess(String username);
+  void onUserRegisterSuccess(String username, String password);
 
   void onError(ErrorData errorData);
 }
