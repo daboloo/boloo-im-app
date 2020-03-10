@@ -36,7 +36,7 @@ class LoginApiRequest {
     Map<String, dynamic> body = Map();
     body.addAll({
       "username": username,
-      "password": Md5Utils.generateMd5(password)
+      "password": password//Md5Utils.generateMd5(password)
     });
 
     await HttpRequest.request<String>(
@@ -45,7 +45,7 @@ class LoginApiRequest {
         data: body,
         model: _user,
         success: (result) {
-          loginCallback?.onUserRegisterSuccess(username);
+          loginCallback?.onUserRegisterSuccess(username, password);
         }, error: (errorModel) {
           loginCallback?.onError(errorModel);
     });

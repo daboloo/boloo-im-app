@@ -11,54 +11,75 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with LoginCallbackMixin {
+class _LoginPageState extends State<LoginPage> with LoginCallbackMixin, SingleTickerProviderStateMixin {
 
-  TextEditingController _controllerUserName = TextEditingController();
-  TextEditingController _controllerPassword = TextEditingController();
+  TabController _tabController;
+
+  TextEditingController _controllerLoginUserName = TextEditingController();
+  TextEditingController _controllerLoginPassword = TextEditingController();
+
+  TextEditingController _controllerRegisterUserName = TextEditingController();
+  TextEditingController _controllerRegisterPassword = TextEditingController();
   
   LoginApiRequest _httpRequest;
+
+  List tabs = ["登录", "注册"];
 
   @override
   void initState() {
     super.initState();
     _httpRequest = LoginApiRequest(this);
+    _tabController = TabController(length: tabs.length, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Daboloo"),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(48),
+          child: Material(
+            color: Color(0xFF5D85E0),
+            child: TabBar(
+              indicator: BoxDecoration(color: Colors.lightBlue),
+              controller: _tabController,
+              tabs: tabs.map((e) => Tab(text: e)).toList()
+            ),
+          ),
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          getLoginContainer(),
+          getRegisterContainer()
+        ],
+      ),
+    );
+  }
+
+  Widget getLoginContainer() {
     return Container(
-      margin: EdgeInsets.only(top: 50),
+      padding: EdgeInsets.only(top: 50),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white10,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(
-              top: 16,
-              left: 16,
-              bottom: 32,
-            ),
-            child: Text(
-              'Login',
-              style: TextStyle(
-                fontSize: 20,
-              ),
-            ),
-          ),
-          Container(
             margin: EdgeInsets.symmetric(
               vertical: 4,
               horizontal: 16,
             ),
             child: TextField(
-              controller: _controllerUserName,
+              controller: _controllerLoginUserName,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Username',
+                labelText: '用户名',
                 prefixIcon: Icon(Icons.verified_user),
               ),
             ),
@@ -69,10 +90,10 @@ class _LoginPageState extends State<LoginPage> with LoginCallbackMixin {
               horizontal: 16,
             ),
             child: TextField(
-              controller: _controllerPassword,
+              controller: _controllerLoginPassword,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Password',
+                labelText: '密码',
                 prefixIcon: Icon(Icons.security),
               ),
             ),
@@ -87,11 +108,80 @@ class _LoginPageState extends State<LoginPage> with LoginCallbackMixin {
                   minWidth: 268,
                   child: RaisedButton(
                     onPressed: () {
-                      _httpRequest.userPasswordLogin(_controllerUserName.text,
-                          _controllerPassword.text);
+                      _httpRequest.userPasswordLogin(_controllerLoginUserName.text,
+                          _controllerLoginPassword.text);
                     },
                     child: Text(
-                      'Login',
+                      '登录',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget getRegisterContainer() {
+    return Container(
+      padding: EdgeInsets.only(top: 50),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white10,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 16,
+            ),
+            child: TextField(
+              controller: _controllerRegisterUserName,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: '用户名',
+                prefixIcon: Icon(Icons.verified_user),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 16,
+            ),
+            child: TextField(
+              controller: _controllerRegisterPassword,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: '密码',
+                prefixIcon: Icon(Icons.security),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ButtonTheme(
+                  minWidth: 268,
+                  child: RaisedButton(
+                    onPressed: () {
+                      _httpRequest.userRegister(_controllerRegisterUserName.text,
+                          _controllerRegisterPassword.text);
+                    },
+                    child: Text(
+                      '注册',
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
@@ -119,9 +209,17 @@ class _LoginPageState extends State<LoginPage> with LoginCallbackMixin {
   }
 
   @override
-  void onUserRegisterSuccess(String username) {
+  void onUserRegisterSuccess(String username, String password) {
     //切换到登录界面
     SharedPreferenceUtils.saveString(kSharedPreferenceUserName, username);
+    FocusScope.of(context).requestFocus(FocusNode());
+    setState(() {
+      _controllerLoginUserName.text = username;
+      _controllerLoginPassword.text = password;
+      _tabController.animateTo(0);
+    });
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text("注册成功")));
   }
 
   @override
