@@ -1,7 +1,6 @@
 import 'package:Daboloo/api/user_service.dart';
 import 'package:Daboloo/callbacks/login_callback.dart';
 import 'package:Daboloo/model/user.dart';
-import 'package:Daboloo/utils/md5_utils.dart';
 import 'package:Daboloo/http/http_request.dart';
 import 'package:Daboloo/http/http_method.dart';
 

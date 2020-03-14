@@ -1,5 +1,5 @@
 import 'package:Daboloo/config.dart';
-import 'package:Daboloo/pages/home/home.dart';
+import 'package:Daboloo/pages/home/home_container.dart';
 import 'package:Daboloo/pages/login/login.dart';
 import 'package:Daboloo/pages/navigator_manager.dart';
 import 'package:Daboloo/utils/shared_preference_utils.dart';
@@ -48,7 +48,7 @@ class _NewHomeStates extends State<NewHome> {
     SharedPreferenceUtils.getString(kSharedPreferenceUserToken).then((token) {
       Widget firstPage;
       if (token != null && token != "") {
-        firstPage = MyHomePage(title: "Hello, Daboloo!",);
+        firstPage = HomeContainerPage();
       } else {
         firstPage = LoginPage();
       }

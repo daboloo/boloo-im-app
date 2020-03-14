@@ -1,6 +1,6 @@
 import 'package:Daboloo/callbacks/login_callback.dart';
 import 'package:Daboloo/config.dart';
-import 'package:Daboloo/pages/home/home.dart';
+import 'package:Daboloo/pages/home/home_container.dart';
 import 'package:Daboloo/request/login_api_request.dart';
 import 'package:Daboloo/utils/shared_preference_utils.dart';
 import 'package:Daboloo/http/base/error_data.dart';
@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> with LoginCallbackMixin, SingleTi
   void onUserLoginSuccess(String token) {
     if (token != null) {
       SharedPreferenceUtils.saveString(kSharedPreferenceUserToken, token);
-      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => MyHomePage(title: 'Hello, Daboloo!')),
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeContainerPage()),
               (Route<dynamic> rout) => false);
     }
   }
