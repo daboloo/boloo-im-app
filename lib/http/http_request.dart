@@ -13,60 +13,6 @@ import 'interceptors/request_interceptor.dart';
 class HttpRequest {
   static Dio dio = DioManager().dio;
 
-  static Future<T> getRequest<T>(String url, {Map<String, dynamic> params}) async {
-    // 1.单独相关的设置
-    Options options = Options();
-    options.method = "get";
-
-    List<String> splits = url.split(":");
-    String path = url;
-
-    if (splits.length >= 2) {
-      path = splits[1];
-      options.extra = {
-        "gateway": splits[0]
-      };
-    }
-
-    // 2.设置拦截器
-    addInterceptors(dio);
-    // 3.发送网络请求
-    try {
-
-      Response response = await dio.get<T>(path, queryParameters: params, options: options);
-      return response.data;
-    } on DioError catch (e) {
-      throw e;
-    }
-  }
-
-  static Future<T> postRequest<T>(String url, {Map<String, dynamic> data, Map<String, dynamic> params}) async {
-    // 1.单独相关的设置
-    Options options = Options();
-    options.method = "post";
-
-    List<String> splits = url.split(":");
-    String path = url;
-
-    if (splits.length >= 2) {
-      path = splits[1];
-      options.extra = {
-        "gateway": splits[0]
-      };
-    }
-
-    // 2.设置拦截器
-    addInterceptors(dio);
-    // 3.发送网络请求
-    try {
-
-      Response response = await dio.post<T>(path, data: data, queryParameters: params, options: options);
-      return response.data;
-    } on DioError catch (e) {
-      throw e;
-    }
-  }
-
   /// 请求，返回参数为 T
   /// method：请求方法，HttpMethod.POST等
   /// path：请求地址
@@ -90,15 +36,23 @@ class HttpRequest {
       if (response != null) {
         BaseResponseData entity = BaseResponseData<T>.fromJson(model, response.data);
         if (entity.success) {
-          success(entity.data);
+          if (success != null) {
+            success(entity.data);
+          }
         } else {
-          error(ErrorData(code: entity.code, message: entity.message));
+          if (error != null) {
+            error(ErrorData(code: entity.code, message: entity.message));
+          }
         }
       } else {
-        error(ErrorData(code: -1000, message: "未知错误"));
+        if (error != null) {
+          error(ErrorData(code: -1000, message: "未知错误"));
+        }
       }
     } on DioError catch(e) {
-      error(createErrorEntity(e));
+      if (error != null) {
+        error(createErrorEntity(e));
+      }
     }
   }
 
@@ -125,15 +79,23 @@ class HttpRequest {
       if (response != null) {
         BaseListResponseData entity = BaseListResponseData<T>.fromJson(model, response.data);
         if (entity.success) {
-          success(entity.data);
+          if (success != null) {
+            success(entity.data);
+          }
         } else {
-          error(ErrorData(code: entity.code, message: entity.message));
+          if (error != null) {
+            error(ErrorData(code: entity.code, message: entity.message));
+          }
         }
       } else {
-        error(ErrorData(code: 1000, message: "未知错误"));
+        if (error != null) {
+          error(ErrorData(code: -1000, message: "未知错误"));
+        }
       }
     } on DioError catch(e) {
-      error(createErrorEntity(e));
+      if (error != null) {
+        error(createErrorEntity(e));
+      }
     }
   }
 
@@ -176,9 +138,9 @@ class HttpRequest {
     return dio
             ..interceptors
             .addAll([
-             LogInterceptor(requestBody: true, responseBody: true),
-             CacheInterceptor(),
-             RequestInterceptor()
+              RequestInterceptor(),
+              LogInterceptor(requestBody: true, responseBody: true),
+              CacheInterceptor()
           ]);
   }
 }

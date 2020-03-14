@@ -14,7 +14,7 @@ class BaseResponseData<T> {
       message: json["errorMsg"],
       success: json["success"],
       data: (json != null) ? (json["data"] is String) ?
-      json["data"] : baseModel.fromJson(json["data"]) :  null
+      json["data"] : baseModel?.fromJson(json["data"]) : null
     );
   }
 }

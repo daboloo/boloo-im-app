@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Daboloo/config.dart';
+import 'package:Daboloo/utils/shared_preference_utils.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RequestInterceptor extends Interceptor {
 
@@ -14,8 +14,7 @@ class RequestInterceptor extends Interceptor {
 
   @override
   Future<dynamic> onRequest(RequestOptions options) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.get(kSharedPreferenceUserToken);
+    String token = await SharedPreferenceUtils.getString(kSharedPreferenceUserToken);
 
     String userAgent;
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -35,5 +34,7 @@ class RequestInterceptor extends Interceptor {
       AUTHORIZATION: token,
       USER_AGENT: userAgent,
     });
+
+    return options;
   }
 }
