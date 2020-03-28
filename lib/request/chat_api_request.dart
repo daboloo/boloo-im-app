@@ -3,7 +3,6 @@ import 'package:Daboloo/api/chat_service.dart';
 import 'package:Daboloo/callbacks/chat_callback.dart';
 import 'package:Daboloo/http/http_method.dart';
 import 'package:Daboloo/http/http_request.dart';
-import 'package:Daboloo/model/friend.dart';
 import 'package:Daboloo/model/friends.dart';
 
 class ChatApiRequest {

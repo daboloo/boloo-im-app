@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Daboloo/config.dart';
+import 'package:Daboloo/pages/login/login.dart';
+import 'package:Daboloo/pages/navigator_manager.dart';
 import 'package:Daboloo/utils/shared_preference_utils.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 class RequestInterceptor extends Interceptor {
 
@@ -36,5 +39,15 @@ class RequestInterceptor extends Interceptor {
     });
 
     return options;
+  }
+
+  @override
+  Future onError(DioError error) {
+    if (error.response != null && error.response.statusCode == 403) {
+      //鉴权失败token过期，去登陆页面重新登录
+      RouteManager.instance.pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()),
+              (Route<dynamic> rout) => true);
+    }
+    return super.onError(error);
   }
 }
