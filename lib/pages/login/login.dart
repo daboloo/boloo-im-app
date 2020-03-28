@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> with LoginCallbackMixin, SingleTi
     if (token != null) {
       SharedPreferenceUtils.saveString(kSharedPreferenceUserToken, token);
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomeContainerPage()),
-              (Route<dynamic> rout) => false);
+              (Route<dynamic> rout) => true);
     }
   }
 
